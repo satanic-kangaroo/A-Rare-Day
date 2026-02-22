@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A RAre Day</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Space+Mono&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Cormorant Garamond', serif;
+            overflow: hidden; 
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            
+        }
+
+        #stars-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0;
+            transition: opacity 4s ease-in-out;
+            pointer-events: none;
+        }
+
+        .screen {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 800px;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+            pointer-events: none;
+        }
+
+        .active {
+            opacity: 1;
+        }
+
+        h1, h2, p {
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        .title-text {
+            font-size: 2rem;
+            line-height: 1.5;
+            text-shadow: 0 0 20px rgba(255,255,255,0.3);
+        }
+
+        @media (min-width: 768px) {
+            .title-text {
+                font-size: 3rem;
+            }
+        }
+
+        .typed-date {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.5rem;
+            letter-spacing: 4px;
+            color: #e0e0e0;
+            border-right: 2px solid #fff;
+            padding-right: 5px;
+            animation: blinkCursor 0.8s infinite;
+        }
+
+        @keyframes blinkCursor {
+            0%, 100% { border-color: transparent; }
+            50% { border-color: #fff; }
+        }
+
+        #phase3 {
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .rare-text {
+            font-size: 1.8rem;
+            font-style: italic;
+            opacity: 0;
+            transition: opacity 2.5s ease-in-out;
+        }
+
+        .counter-section {
+            opacity: 0;
+            transition: opacity 2.5s ease-in-out;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        .counter-section p {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #aaa;
+        }
+
+        .counter-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            font-family: 'Space Mono', monospace;
+        }
+
+        @media (max-width: 600px) {
+            .counter-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+        }
+
+        .counter-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .counter-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
+        .counter-label {
+            font-size: 0.8rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 5px;
+        }
+
+        .final-text {
+            font-size: 1.8rem;
+            line-height: 1.6;
+            opacity: 0;
+            transition: opacity 3s ease-in-out;
+            margin-top: 1rem;
+        }
+
+        .highlight-name {
+            font-weight: 400;
+            font-size: 2.2rem;
+            background: linear-gradient(45deg, #fff, #a8c0ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Start Button */
+        #start-btn {
+            padding: 15px 30px;
+            background: transparent;
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 30px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 2px;
+            z-index: 100;
+        }
+
+        #start-btn:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.8);
+        }
+
+    </style>
+</head>
+<body>
+
+    <canvas id="stars-canvas"></canvas>
+
+    <button id="start-btn">Click to Begin</button>
+
+    <div id="screen1" class="screen">
+        <h1 class="title-text">A Page That Exists<br>Because You Were Born</h1>
+    </div>
+
+    <div id="screen2" class="screen">
+        <h1 class="title-text">The Universe Changed<br>On This Date</h1>
+    </div>
+
+    <div id="screen-date" class="screen">
+        <span id="typing-date" class="typed-date"></span>
+    </div>
+
+    <div id="phase3" class="screen">
+        <div id="rare-text" class="rare-text">The universe gained something rare.</div>
+        
+        <div id="counter-section" class="counter-section">
+            <p>You have existed for:</p>
+            <div class="counter-grid">
+                <div class="counter-item">
+                    <span id="c-days" class="counter-value">0</span>
+                    <span class="counter-label">Days</span>
+                </div>
+                <div class="counter-item">
+                    <span id="c-hours" class="counter-value">0</span>
+                    <span class="counter-label">Hours</span>
+                </div>
+                <div class="counter-item">
+                    <span id="c-mins" class="counter-value">0</span>
+                    <span class="counter-label">Minutes</span>
+                </div>
+                <div class="counter-item">
+                    <span id="c-secs" class="counter-value">0</span>
+                    <span class="counter-label">Seconds</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="final-text" class="final-text">
+            And the world is better because of it.<br>
+            <span class="highlight-name">Happy Birthday, Raha.</span>
+        </div>
+    </div>
+
+    <script>
+        const birthYear = 2006;
+        const birthMonth = 1; // 0 = January, 1 = February, ..., 11 = December
+        const birthDay = 22;
+        const birthDate = new Date(birthYear, birthMonth, birthDay, 0, 0, 0);
+      
+        const dateStringForTyping = "February 22, 2006";
+
+        const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+        function initStars() {
+            const canvas = document.getElementById('stars-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            const stars = [];
+            for (let i = 0; i < 300; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 1.5,
+                    opacity: Math.random()
+                });
+            }
+
+            function drawStars() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                stars.forEach(star => {
+                    ctx.beginPath();
+                    ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
+                    ctx.fill();
+                    // Twinkle effect
+                    star.opacity += (Math.random() - 0.5) * 0.05;
+                    if (star.opacity < 0.1) star.opacity = 0.1;
+                    if (star.opacity > 1) star.opacity = 1;
+                });
+                requestAnimationFrame(drawStars);
+            }
+            drawStars();
+        }
+
+        function updateCounter() {
+            const now = new Date();
+            const diff = now - birthDate;
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const mins = Math.floor((diff / 1000 / 60) % 60);
+            const secs = Math.floor((diff / 1000) % 60);
+
+            document.getElementById('c-days').innerText = days.toLocaleString();
+            document.getElementById('c-hours').innerText = hours.toString().padStart(2, '0');
+            document.getElementById('c-mins').innerText = mins.toString().padStart(2, '0');
+            document.getElementById('c-secs').innerText = secs.toString().padStart(2, '0');
+        }
+
+        async function typeDate(text, elementId, speed = 100) {
+            const el = document.getElementById(elementId);
+            for (let i = 0; i < text.length; i++) {
+                el.innerText += text.charAt(i);
+                await sleep(speed);
+            }
+        }
+
+        async function startSequence() {
+
+            const startBtn = document.getElementById('start-btn');
+            startBtn.style.opacity = '0';
+            await sleep(500);
+            startBtn.style.display = 'none';
+
+            const s1 = document.getElementById('screen1');
+            s1.classList.add('active');
+            await sleep(4000);
+            s1.classList.remove('active');
+            await sleep(2000);
+
+            const s2 = document.getElementById('screen2');
+            s2.classList.add('active');
+            await sleep(4000);
+            s2.classList.remove('active');
+            await sleep(2000);
+
+            const sDate = document.getElementById('screen-date');
+            sDate.classList.add('active');
+            await sleep(1000);
+            await typeDate(dateStringForTyping, 'typing-date', 120);
+            await sleep(2000); // Hold date on screen briefly
+            sDate.classList.remove('active');
+            await sleep(2000); // Fade to completely black
+
+            
+            initStars();
+            document.getElementById('stars-canvas').style.opacity = '1';
+            await sleep(3000); // Let them look at the stars
+
+            const phase3 = document.getElementById('phase3');
+            phase3.classList.add('active'); // container holds layout
+            
+            const rareText = document.getElementById('rare-text');
+            const counterSec = document.getElementById('counter-section');
+            const finalText = document.getElementById('final-text');
+
+            rareText.style.opacity = '1';
+            await sleep(4000);
+
+            setInterval(updateCounter, 1000);
+            updateCounter(); // initial call
+            counterSec.style.opacity = '1';
+            await sleep(5000);
+
+            finalText.style.opacity = '1';
+        }
+
+        document.getElementById('start-btn').addEventListener('click', startSequence);
+
+    </script>
+</body>
+</html>
